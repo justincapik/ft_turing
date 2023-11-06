@@ -35,10 +35,10 @@ opt:		$(NAME).opt
 byt:		$(NAME).byt
 
 $(NAME).byt:	$(OBJS)
-	$(CAMLC) -I +str str.cma -o $(NAME).byt $(OBJS)
+	ocamlfind $(CAMLC) -linkpkg -thread -package core,yojson -I +str str.cma -o $(NAME).byt $(OBJS)
 
 $(NAME).opt:	$(OBJOPT)
-	$(CAMLOPT) -I +str str.cmxa -o $(NAME).opt $(OBJOPT)
+	ocamlfind $(CAMLOPT) -linkpkg -thread -thread -package core,yojson -I +str str.cmxa -o $(NAME).opt $(OBJOPT)
 
 ##
 ##		OCAML FILES
@@ -47,13 +47,13 @@ $(NAME).opt:	$(OBJOPT)
 .SUFFIXES:	.ml .mli .cmo .cmi .cmx
 
 .mli.cmi:
-	$(CAMLC) -I +str str.cma -c $<
+	ocamlfind $(CAMLC) -thread -package yojson,core -I +str str.cma -c $<
 
 .ml.cmo:
-	$(CAMLC) -I +str str.cma -c $<
+	ocamlfind $(CAMLC) -thread -package yojson,core -I +str str.cma -c $<
 
 .ml.cmx:
-	$(CAMLOPT) -I +str str.cmxa -c $<
+	ocamlfind $(CAMLOPT) -thread -package yojson,core -I +str str.cmxa -c $<
 
 ##
 ##		CLEANING 
