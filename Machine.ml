@@ -1,20 +1,13 @@
 module type MachineStruct = 
   sig
 
-    type alphabet
-    type state 
-    type move
     type instruction
     type machine_data 
 
-    val new_alphabet: char -> alphabet
-    val new_state: string -> state
-    val new_move: string -> move
+    val new_instruction: string -> char -> string -> char -> string -> instruction
 
-    val new_instruction: state -> alphabet -> state -> alphabet -> move -> instruction
-
-    val new_machine: string -> alphabet list -> alphabet ->
-      state list -> state -> state list -> state list ->
+    val new_machine: string -> char list -> char ->
+      string list -> string -> string list -> instruction list ->
       machine_data
 
     (*val run_machine : machine_data -> string -> unit*)
@@ -24,30 +17,23 @@ module type MachineStruct =
 module Machine : MachineStruct = 
   struct
 
-    type alphabet = char
-    type state = string
-    type move = string
     type instruction = {
-      in_state  : state;
-      read      : alphabet;
-      to_state  : state;
-      write     : alphabet;
-      action    : move
+      in_state  : string;
+      read      : char;
+      to_state  : string;
+      write     : char;
+      action    : string
     }
 
     type machine_data = {
       name              : string;
-      machine_alphabet  : alphabet list;
-      blank             : alphabet;
-      states            : state list;
-      inital            : state;
-      finals            : state list;
-      transitions       : state list;
+      machine_alphabet  : char list;
+      blank             : char;
+      states            : string list;
+      inital            : string;
+      finals            : string list;
+      transitions       : instruction list;
     }
-
-    let new_alphabet a = a
-    let new_state s = s
-    let new_move m = m
 
     let new_instruction in_state read to_state write action = {
       in_state = in_state;

@@ -1,3 +1,5 @@
+open Machine
+
 let clean_json contents =
   Str.global_replace (Str.regexp "[][> \n\t\r]") "" contents
 
@@ -14,6 +16,51 @@ let rec read_transitions transitions keys n =
   | _ -> List.append [transitions |> Yojson.Basic.Util.member (List.nth keys n)
       |> Yojson.Basic.Util.member "read"]
     (read_transitions transitions keys (n-1))
+
+(*UNUSED*)
+let rec iterate_through tr =
+  let open Yojson.Basic.Util in 
+  let parse_assoc assoc = 
+    let lst = List.map to_assoc (assoc |> to_list) in
+    List.iter iterate_through lst
+  in
+  print_string "=== ";
+  match tr with
+  | [] -> ()
+  | [str, assoc] -> print_string "=-= ";
+      print_endline (str ^ (assoc |> to_string));
+  | (str,assoc)::tail ->
+    try
+      parse_assoc assoc;
+      print_endline str;
+      match tail with
+      | [] -> ()
+      | [str, assoc] -> parse_assoc assoc
+      | t -> iterate_through t
+    with e ->
+      print_string "=+= ";
+      print_endline (str ^ (assoc |> to_string));
+      iterate_through tail
+
+let rec get_transitions tr states =
+  let open Yojson.Basic.Util in 
+  let rec get_all_instruction name =
+    let get_one_instruction lst = 
+      let cs = name in 
+      let r = (lst |> member "read" |> to_string).[0] in
+      let ts = lst |> member "to_state" |> to_string in
+      let w = (lst |> member "write" |> to_string).[0] in
+      let a = lst |> member "action" |> to_string in
+      Machine.new_instruction cs r ts w a
+    in
+    print_endline name;
+    try
+      let lst = tr |> member name |> to_list in
+      List.map get_one_instruction lst
+    with e ->
+      prerr_endline ("Error while reading state " ^ name); []
+  in
+  List.flatten (List.map get_all_instruction states)
 
 
 let parser filename = 
@@ -38,29 +85,11 @@ let parser filename =
       let finals = json |> member "finals" |> to_list |> filter_string in
       let transitions = json |> member "transitions" in
       (*tests*)
-      let rec test tr =
-        match tr with
-        | [str, assoc] -> print_endline (str ^ (assoc |> to_string))
-        | (str,assoc)::tail ->
-          try
-            let lst = List.map to_assoc (assoc |> to_list) in
-            List.iter test tail;
-            print_endline (str ^ (assoc |> to_string))
-            (*let res = String.concat " <=> " (List.map test lst) in
-            print_endline ("RES("^str^")=>" ^ res)*)
-          with e ->
-            print_endline (str ^ (assoc |> to_string));
-        | _ -> ()
-      in
-      test (transitions |> to_assoc);
-      (*
-      let k = Yojson.Basic.Util.keys transitions in
-      let lst = read_transitions transitions k ((List.length k) + 1) in *)
-      (*print_endline (transitions |> member "scanright" |> to_list |> member "action" |> to_string);
-      let scanr = List.map (fun json -> member "scanright" json |> to_list ) transitions in*)
-      (*let is_online = json |> member "is_online" |> to_bool_option in
-      let authors = json |> member "authors" |> to_list in
-      let names = List.map authors ~f:(fun json -> member "name" json |> to_string) in*)
+      iterate_through (transitions |> to_assoc);
+      let active_states = List.filter (fun elem -> not (List.mem elem finals)) sts in
+      print_endline "before";
+      let instruction_list = get_transitions transitions active_states in
+      print_endline "done";
 
       Printf.printf "Name: %s \n" name;
       Printf.printf "alphabet: %s\n" (String.concat ", " al);
@@ -68,21 +97,11 @@ let parser filename =
       Printf.printf "states: %s\n" (String.concat ", " sts);
       Printf.printf "initial: %s \n" initial;
       Printf.printf "finals: %s\n" (String.concat ", " finals);
-      (*Printf.printf "trans: %s\n" (String.concat ", " k);*)
-      (*
-      Printf.printf "transitions: %s\n" (String.concat ", " transitions);
-      (* Print the results of the parsing *)
-      printf "Title: %s (%d)\n" title pages;
-      printf "Authors: %s\n" (String.concat ~sep:", " names);
-      printf "Tags: %s\n" (String.concat ~sep:", " tags);
-      let string_of_bool_option =
-        function
-        | None -> "<unknown>"
-        | Some true -> "yes"
-        | Some false -> "no" in
-      printf "Online: %s\n" (string_of_bool_option is_online);
-      printf "Translated: %s\n" (string_of_bool_option is_translated)
-      *)
+
+      let char_al = List.map (fun elem -> elem.[0]) al in
+
+      let machine = Machine.new_machine name char_al blank.[0] sts initial finals instruction_list in
+      print_endline "it worked !";
       
     with e ->
       close_in_noerr filechannel;
