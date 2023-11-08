@@ -9,7 +9,9 @@ module type MachineStruct =
       string list -> string -> string list -> instruction list ->
       machine_data
 
-    (*val run_machine : machine_data -> string -> unit*)
+    val present_machine : machine_data -> unit
+
+    val run_machine : machine_data -> string -> unit
 
   end
 

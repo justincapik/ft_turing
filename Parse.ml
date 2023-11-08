@@ -17,31 +17,6 @@ let rec read_transitions transitions keys n =
       |> Yojson.Basic.Util.member "read"]
     (read_transitions transitions keys (n-1))
 
-(*UNUSED*)
-let rec iterate_through tr =
-  let open Yojson.Basic.Util in 
-  let parse_assoc assoc = 
-    let lst = List.map to_assoc (assoc |> to_list) in
-    List.iter iterate_through lst
-  in
-  print_string "=== ";
-  match tr with
-  | [] -> ()
-  | [str, assoc] -> print_string "=-= ";
-      print_endline (str ^ (assoc |> to_string));
-  | (str,assoc)::tail ->
-    try
-      parse_assoc assoc;
-      print_endline str;
-      match tail with
-      | [] -> ()
-      | [str, assoc] -> parse_assoc assoc
-      | t -> iterate_through t
-    with e ->
-      print_string "=+= ";
-      print_endline (str ^ (assoc |> to_string));
-      iterate_through tail
-
 let rec get_transitions tr states =
   let open Yojson.Basic.Util in 
   let rec get_all_instruction name =
@@ -53,7 +28,6 @@ let rec get_transitions tr states =
       let a = lst |> member "action" |> to_string in
       Machine.new_instruction cs r ts w a
     in
-    print_endline name;
     try
       let lst = tr |> member name |> to_list in
       List.map get_one_instruction lst
@@ -67,8 +41,6 @@ let parser filename =
     let filechannel = open_in filename in
     try
       let contents = everything filechannel "" in
-     
-      print_string contents;
 
       flush stdout;
       close_in filechannel;
@@ -85,26 +57,25 @@ let parser filename =
       let finals = json |> member "finals" |> to_list |> filter_string in
       let transitions = json |> member "transitions" in
       (*tests*)
-      iterate_through (transitions |> to_assoc);
       let active_states = List.filter (fun elem -> not (List.mem elem finals)) sts in
-      print_endline "before";
       let instruction_list = get_transitions transitions active_states in
-      print_endline "done";
 
+      (*
       Printf.printf "Name: %s \n" name;
       Printf.printf "alphabet: %s\n" (String.concat ", " al);
       Printf.printf "blank: %s \n" blank;
       Printf.printf "states: %s\n" (String.concat ", " sts);
       Printf.printf "initial: %s \n" initial;
       Printf.printf "finals: %s\n" (String.concat ", " finals);
+      *)
 
       let char_al = List.map (fun elem -> elem.[0]) al in
 
       let machine = Machine.new_machine name char_al blank.[0] sts initial finals instruction_list in
-      print_endline "it worked !";
+      machine
       
     with e ->
       close_in_noerr filechannel;
       print_endline (Printexc.to_string e);
-
+      invalid_arg "test";
     
