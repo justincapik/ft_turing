@@ -61,14 +61,17 @@ module Machine : MachineStruct =
       (reading ^ " -> " ^ out)
 
     let rec present_machine machine =
+      print_endline "-------------------------------------------------------------";
       print_endline ("Name: " ^ machine.name);
+      print_endline "-------------------------------------------------------------";
       let alphabet_to_str lst = String.concat ", " (List.map (String.make 1) lst) in
       print_endline ("States: [ " ^ (String.concat ", " machine.states) ^ " ]");
       print_endline ("Alphabet: [ " ^ (alphabet_to_str machine.machine_alphabet) ^ " ]");
       print_endline ("Initial state: " ^ machine.inital);
       print_endline ("Finals: [ " ^ (String.concat ", " machine.finals) ^ " ]");
       print_endline "Instruction list:";
-      List.iter (fun inst -> print_endline ("  " ^ (instruction_string inst))) machine.transitions
+      List.iter (fun inst -> print_endline ("  " ^ (instruction_string inst))) machine.transitions;
+      print_endline "-------------------------------------------------------------"
 
     let run_machine machine data_string =
       let rec loop insts str cursor cur_state =
@@ -82,7 +85,9 @@ module Machine : MachineStruct =
             print_endline "";
             loop insts str cursor cur_inst.to_state;
         else
-          print_endline "Loop done !";
+          begin
+            print_endline "-------------------------------------------------------------"
+          end
       in
       loop machine.transitions data_string 0 machine.inital 
 

@@ -1,12 +1,9 @@
 open Machine
 
-let clean_json contents =
-  Str.global_replace (Str.regexp "[][> \n\t\r]") "" contents
-
-let rec everything channel contents =
+let rec read_file channel contents =
   try 
     let line = input_line channel in
-    everything channel (contents ^ line ^ "\n")
+    read_file channel (contents ^ line ^ "\n")
   with e ->
     contents
 
@@ -37,45 +34,83 @@ let rec get_transitions tr states =
   List.flatten (List.map get_all_instruction states)
 
 
-let parser filename = 
-    let filechannel = open_in filename in
-    try
-      let contents = everything filechannel "" in
+let parser filename =
+  if ((not (Sys.file_exists filename)) || (not (String.ends_with ~suffix:".json" filename))) then
+    begin
+      prerr_endline "ERROR: invalide file";
+      raise Exit
+    end;
 
-      flush stdout;
-      close_in filechannel;
-
-      let json = Yojson.Basic.from_string contents in
-
-      (* Locally open the JSON manipulation functions *)
-      let open Yojson.Basic.Util in
-      let name = json |> member "name" |> to_string in
-      let al = json |> member "alphabet" |> to_list |> filter_string in
-      let blank = json |> member "blank" |> to_string in
-      let sts = json |> member "states" |> to_list |> filter_string in
-      let initial = json |> member "initial" |> to_string in
-      let finals = json |> member "finals" |> to_list |> filter_string in
-      let transitions = json |> member "transitions" in
-      (*tests*)
-      let active_states = List.filter (fun elem -> not (List.mem elem finals)) sts in
-      let instruction_list = get_transitions transitions active_states in
-
-      (*
-      Printf.printf "Name: %s \n" name;
-      Printf.printf "alphabet: %s\n" (String.concat ", " al);
-      Printf.printf "blank: %s \n" blank;
-      Printf.printf "states: %s\n" (String.concat ", " sts);
-      Printf.printf "initial: %s \n" initial;
-      Printf.printf "finals: %s\n" (String.concat ", " finals);
-      *)
-
-      let char_al = List.map (fun elem -> elem.[0]) al in
-
-      let machine = Machine.new_machine name char_al blank.[0] sts initial finals instruction_list in
-      machine
-      
-    with e ->
-      close_in_noerr filechannel;
-      print_endline (Printexc.to_string e);
-      invalid_arg "test";
+  let filechannel = open_in filename in
     
+  (*try TODO*) 
+  let contents = read_file filechannel "" in
+
+  try
+
+    flush stdout;
+    close_in filechannel;
+
+    let json = Yojson.Basic.from_string contents in
+    print_string "";
+    
+    (* get main *)
+    let open Yojson.Basic.Util in
+    let name = json |> member "name" |> to_string in
+    let al = json |> member "alphabet" |> to_list |> filter_string in
+    let blank = json |> member "blank" |> to_string in
+    let sts = json |> member "states" |> to_list |> filter_string in
+    let initial = json |> member "initial" |> to_string in
+    let finals = json |> member "finals" |> to_list |> filter_string in
+    let transitions = json |> member "transitions" in
+    
+    let active_states = List.filter (fun elem -> not (List.mem elem finals)) sts in
+    let instruction_list = get_transitions transitions active_states in
+
+    let char_al = List.map (fun elem -> elem.[0]) al in
+
+    let machine = Machine.new_machine name char_al blank.[0] sts initial finals instruction_list in
+    machine
+    
+  with
+    | Yojson.Json_error e ->
+      close_in_noerr filechannel;
+      prerr_endline "ERROR: format error during parsing: ";
+      prerr_endline e;
+      raise Exit
+    | Yojson.Basic.Finally (exn1, exn2)->
+      close_in_noerr filechannel;
+      let err_str = ("\nParsing excption:" ^ (Printexc.to_string exn1) ^ "\nFinalizer exception:" ^ (Printexc.to_string exn1)) in
+      prerr_string "ERROR: error during parsing and catching error: ";
+      prerr_endline err_str;
+      raise Exit
+    | Yojson.Basic.Util.Type_error (str, f)->
+      close_in_noerr filechannel;
+      let err_str = str in
+      let contains s1 s2 =
+        let re = Str.regexp_string s2 in
+        try 
+          ignore (Str.search_forward re s1 0); 
+          true
+        with Not_found -> false
+      in
+      if contains str "null" then
+        prerr_endline "ERROR: missing field in json"
+      else
+        begin
+          prerr_string "ERROR: Type error during parsing: ";
+          prerr_endline err_str
+        end;
+      raise Exit
+    | Yojson.Basic.Util.Undefined (str, f)->
+      close_in_noerr filechannel;
+      let err_str = str in
+      prerr_string "ERROR: Array index out of bounds found during parsing: ";
+      prerr_endline err_str;
+      raise Exit
+    | e ->
+      close_in_noerr filechannel;
+      prerr_endline "ERROR: unrecognized error during parsing:";
+      prerr_endline (Printexc.to_string e);
+      raise Exit
+  
