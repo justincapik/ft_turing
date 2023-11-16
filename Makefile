@@ -35,10 +35,10 @@ opt:		$(NAME).opt
 byt:		$(NAME).byt
 
 $(NAME).byt:	$(OBJS)
-	ocamlfind $(CAMLC) -linkpkg -thread -package core,yojson -I +str str.cma -o $(NAME).byt $(OBJS)
+	ocamlfind $(CAMLC) -linkpkg -thread -package yojson -I +str str.cma -o $(NAME).byt $(OBJS)
 
 $(NAME).opt:	$(OBJOPT)
-	ocamlfind $(CAMLOPT) -linkpkg -thread -thread -package core,yojson -I +str str.cmxa -o $(NAME).opt $(OBJOPT)
+	ocamlfind $(CAMLOPT) -linkpkg -thread -thread -package yojson -I +str str.cmxa -o $(NAME).opt $(OBJOPT)
 
 ##
 ##		OCAML FILES
@@ -47,13 +47,13 @@ $(NAME).opt:	$(OBJOPT)
 .SUFFIXES:	.ml .mli .cmo .cmi .cmx
 
 .mli.cmi:
-	ocamlfind $(CAMLC) -thread -package yojson,core -I +str str.cma -c $<
+	ocamlfind $(CAMLC) -thread -package yojson -I +str str.cma -c $<
 
 .ml.cmo:
-	ocamlfind $(CAMLC) -thread -package yojson,core -I +str str.cma -c $<
+	ocamlfind $(CAMLC) -thread -package yojson -I +str str.cma -c $<
 
 .ml.cmx:
-	ocamlfind $(CAMLOPT) -thread -package yojson,core -I +str str.cmxa -c $<
+	ocamlfind $(CAMLOPT) -thread -package yojson -I +str str.cmxa -c $<
 
 ##
 ##		CLEANING 
@@ -69,6 +69,17 @@ $(OBJ_PATH):
 	mkdir $(OBJ_PATH)
 
 re:			fclean all
+
+install:
+	brew install opam
+	opam switch create 5.1.0
+	opam init
+	eval $(opam env --switch=5.1.0)
+	opam install yojson -y
+	opam install core -y
+	eval $(opam env --switch=5.1.0)
+	opam install ocamlfind -y
+	eval $(opam env --switch=5.1.0)
 
 .SILENT:	all $(NAME) fclean clean re 
 .PHONY:		clean fclean re

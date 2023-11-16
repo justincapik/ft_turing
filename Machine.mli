@@ -8,6 +8,8 @@ module type MachineStruct =
     val new_machine: string -> char list -> char ->
       string list -> string -> string list -> instruction list ->
       machine_data
+    
+    val check_instruction : machine_data -> unit
 
     val present_machine : machine_data -> unit
 

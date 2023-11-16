@@ -19,25 +19,29 @@ let rec get_transitions tr states =
   let rec get_all_instruction name =
     let get_one_instruction lst = 
       let cs = name in 
-      let r = (lst |> member "read" |> to_string).[0] in
+      let r = (lst |> member "read" |> to_string) in
       let ts = lst |> member "to_state" |> to_string in
-      let w = (lst |> member "write" |> to_string).[0] in
+      let w = (lst |> member "write" |> to_string) in
       let a = lst |> member "action" |> to_string in
+      if String.length r != 1 then
+        begin
+          prerr_endline ("ERROR: invalide read in " ^ cs); raise Exit
+        end
+      else if String.length w != 1 then
+        begin
+          prerr_endline ("ERROR: invalide write in " ^ cs); raise Exit
+        end;
+      let r = r.[0] in
+      let w = w.[0] in
       Machine.new_instruction cs r ts w a
     in
-    try
-      let lst = tr |> member name |> to_list in
-      List.map get_one_instruction lst
-    with e ->
-      prerr_endline ("Error while reading state " ^ name); []
+    let lst = tr |> member name |> to_list in
+    List.map get_one_instruction lst
   in
   List.flatten (List.map get_all_instruction states)
 
-
 let parser filename =
-  if ((not (Sys.file_exists filename)) ||
-      (String.length filename > 4 &&
-      (String.sub filename (String.length filename - 4-1) (String.length filename-1)) == ".json"))
+  if ((not (Sys.file_exists filename) || not (String.ends_with ~suffix:".json" filename)))
     then
       begin
         prerr_endline "ERROR: invalide file";
@@ -46,7 +50,6 @@ let parser filename =
 
   let filechannel = open_in filename in
     
-  (*try TODO*) 
   let contents = read_file filechannel "" in
 
   try
@@ -54,10 +57,10 @@ let parser filename =
     flush stdout;
     close_in filechannel;
 
+    (*Json parsing and finding fields*)
     let json = Yojson.Basic.from_string contents in
     print_string "";
     
-    (* get main *)
     let open Yojson.Basic.Util in
     let name = json |> member "name" |> to_string in
     let al = json |> member "alphabet" |> to_list |> filter_string in
@@ -66,13 +69,40 @@ let parser filename =
     let initial = json |> member "initial" |> to_string in
     let finals = json |> member "finals" |> to_list |> filter_string in
     let transitions = json |> member "transitions" in
-    
+
+    let char_al = List.map (fun elem -> if (String.length elem) != 1 then
+      begin prerr_endline "ERROR: alphabet character is not of length one"; raise Exit end else elem.[0]) al in
+
+    (*Error verification*)
+    if (not (List.mem initial sts)) then
+      begin
+        print_endline "ERROR: initial state not in states list"; raise Exit
+      end
+    else if (not (List.exists (fun st -> st = blank) al)) then
+      begin
+        print_endline "ERROR: blank alphabet character not in alphabet";
+        raise Exit
+      end
+    else if List.is_empty finals then
+      begin
+        print_endline "ERROR: finals list is empty";
+        raise Exit
+      end;
+    List.iter (fun f ->
+      if (not (List.mem f sts)) then
+        begin prerr_endline "ERROR: final state not found in states list"; raise Exit end)
+      finals;
+
+    close_in_noerr filechannel;
+   
+    (*create machine*)
     let active_states = List.filter (fun elem -> not (List.mem elem finals)) sts in
     let instruction_list = get_transitions transitions active_states in
-
-    let char_al = List.map (fun elem -> elem.[0]) al in
-
     let machine = Machine.new_machine name char_al blank.[0] sts initial finals instruction_list in
+    
+    (*final instruction verification*)
+    Machine.check_instruction machine;
+    
     machine
     
   with
@@ -113,7 +143,5 @@ let parser filename =
       raise Exit
     | e ->
       close_in_noerr filechannel;
-      prerr_endline "ERROR: unrecognized error during parsing:";
-      prerr_endline (Printexc.to_string e);
+      (*prerr_endline ("ERROR: unrecognized error during parsing:" ^ (Printexc.to_string e));*)
       raise Exit
-  

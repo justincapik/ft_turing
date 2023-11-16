@@ -35,4 +35,4 @@ let () =
     Machine.Machine.present_machine machine;
     (*run machine*)
     Machine.Machine.run_machine machine (List.nth argv 2);
-  with e -> print_endline (Printexc.to_string e);
+  with e -> print_string "";(*print_endline (Printexc.to_string e);*)

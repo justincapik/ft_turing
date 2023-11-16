@@ -10,6 +10,8 @@ module type MachineStruct =
       string list -> string -> string list -> instruction list ->
       machine_data
     
+    val check_instruction : machine_data -> unit
+    
     val present_machine : machine_data -> unit
 
     val run_machine : machine_data -> string -> unit
@@ -55,10 +57,48 @@ module Machine : MachineStruct =
       transitions = transitions;      
     }
 
+    let check_instruction machine =
+      let loop inst = 
+        if not (List.exists (fun st -> st = inst.in_state) machine.states) then
+          begin
+            prerr_endline ("ERROR: invalide in_state in " ^ inst.in_state); raise Exit
+          end
+        else if not (List.exists (fun st -> st = inst.read) machine.machine_alphabet) then
+          begin
+            prerr_endline ("ERROR: invalide read in " ^ inst.in_state); raise Exit
+          end
+        else if not (List.exists (fun st -> st = inst.to_state) machine.states) then
+          begin
+            prerr_endline ("ERROR: invalide to_state in " ^ inst.in_state); raise Exit
+          end
+        else if not (List.exists (fun st -> st = inst.write) machine.machine_alphabet) then
+          begin
+            prerr_endline ("ERROR: invalide write in " ^ inst.in_state); raise Exit
+          end
+        else if not (inst.action = "RIGHT" || inst.action = "LEFT") then
+          begin
+            prerr_endline ("ERROR: invalide action in " ^ inst.in_state); raise Exit
+          end
+      in
+      List.iter loop machine.transitions
+
     let instruction_string instr = 
-      let reading = ( "(" ^ instr.in_state ^ ", " ^ (String.make 1 instr.read) ^ ")") in
+      let reading = ( "\t(" ^ instr.in_state ^ ", " ^ (String.make 1 instr.read) ^ ")") in
       let out = ( "(" ^ instr.in_state ^ ", " ^ (String.make 1 instr.write) ^ ", " ^ instr.action ^ ")") in
       (reading ^ " -> " ^ out)
+
+    let update_str str cursor blank = 
+      if cursor = String.length str then
+        str ^ (String.make 1 blank)
+      else if cursor < 0 then
+        (String.make 1 blank) ^ str
+      else
+        str
+
+    let get_data_string str cursor =
+      (String.sub str 0 cursor) ^ "<" ^ (String.make 1 str.[cursor]) ^ ">" ^
+      (String.sub str (cursor+1) ((String.length str)-1-cursor))
+
 
     let rec present_machine machine =
       print_endline "-------------------------------------------------------------";
@@ -77,18 +117,30 @@ module Machine : MachineStruct =
       let rec loop insts str cursor cur_state =
         if not (List.mem cur_state machine.finals)
           then
-            let cur_inst = List.find (fun inst -> (inst.in_state = cur_state && str.[cursor] = inst.read)) insts in
-            (* TODO CHANGE CUS CAN'T HAVE LONG STRING*)
-            let str = String.mapi (fun i c -> if i = cursor then cur_inst.write else c) str in
-            let cursor = if cur_inst.action = "RIGHT" then (cursor + 1) else (cursor - 1) in
-            print_string (str ^ " \t" ^ (instruction_string cur_inst));
-            print_endline "";
-            loop insts str cursor cur_inst.to_state;
+            let cur_inst = List.find_opt (fun inst -> (inst.in_state = cur_state && str.[cursor] = inst.read)) insts in
+            match cur_inst with
+            | Some cur_inst -> 
+              (* TODO CHANGE CUS CAN'T HAVE LONG STRING*)
+              print_endline ((get_data_string str cursor) ^ (instruction_string cur_inst));
+              let str = String.mapi (fun i c -> if i = cursor then cur_inst.write else c) str in
+              
+              (*update cursor and string*)
+              let cursor = if cur_inst.action = "RIGHT" then (cursor + 1) else (cursor - 1) in
+              let str = update_str str cursor machine.blank in
+              let cursor = if cursor < 0 then 0 else cursor in 
+              loop insts str cursor cur_inst.to_state;
+            | None ->
+              prerr_endline ("\nMachine is blocked: couldn't match current state <" ^ cur_state ^
+                "> and current character <" ^ (String.make 1 str.[cursor]) ^ "> to instruction");
+              raise Exit
         else
           begin
             print_endline "-------------------------------------------------------------"
           end
       in
-      loop machine.transitions data_string 0 machine.inital 
+      try
+        loop machine.transitions data_string 0 machine.inital 
+      with e ->
+        raise Exit
 
   end
