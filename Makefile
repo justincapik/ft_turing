@@ -76,7 +76,6 @@ install:
 	opam init
 	eval $(opam env --switch=5.1.0)
 	opam install yojson -y
-	opam install core -y
 	eval $(opam env --switch=5.1.0)
 	opam install ocamlfind -y
 	eval $(opam env --switch=5.1.0)

@@ -108,7 +108,7 @@ module Machine : MachineStruct =
       (String.sub str (cursor+1) ((String.length str)-1-cursor))
 
 
-    let rec present_machine machine =
+    let present_machine machine =
       print_endline "-------------------------------------------------------------";
       print_endline ("Name: " ^ machine.name);
       print_endline "-------------------------------------------------------------";
@@ -149,7 +149,7 @@ module Machine : MachineStruct =
       in
       try
         loop machine.transitions data_string 0 machine.inital 
-      with e ->
+      with e-> ignore(e);
         raise Exit
 
   end

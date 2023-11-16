@@ -1,3 +1,5 @@
+open Parse
+
 let print_usage str =
   let usage = "usage: ft_turing [-h] jsonfile input
 
@@ -20,15 +22,11 @@ let () =
     try
       if (List.find find_h argv != "") then
       print_usage "";
-    with e ->
-      begin
-        print_string "";
-      end;
+    with e -> ignore(e);
 
     if List.length argv != 3 then
       prerr_endline "ERROR: Wrong number of arguments";
     
-    (**) 
     let filename = List.nth argv 1 in
     let data_string = List.nth argv 2 in
     let machine = Parse.parser filename in
@@ -37,4 +35,4 @@ let () =
     Machine.Machine.present_machine machine;
     (*run machine*)
     Machine.Machine.run_machine machine data_string;
-  with e -> print_string "";(*print_endline (Printexc.to_string e);*)
+  with e -> ignore (e);(*print_endline (Printexc.to_string e);*)

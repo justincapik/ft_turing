@@ -4,7 +4,7 @@ let rec read_file channel contents =
   try 
     let line = input_line channel in
     read_file channel (contents ^ line ^ "\n")
-  with e ->
+  with e -> ignore(e);
     contents
 
 let rec read_transitions transitions keys n =
@@ -14,9 +14,9 @@ let rec read_transitions transitions keys n =
       |> Yojson.Basic.Util.member "read"]
     (read_transitions transitions keys (n-1))
 
-let rec get_transitions tr states =
+let get_transitions tr states =
   let open Yojson.Basic.Util in 
-  let rec get_all_instruction name =
+  let get_all_instruction name =
     let get_one_instruction lst = 
       let cs = name in 
       let r = (lst |> member "read" |> to_string) in
@@ -112,11 +112,12 @@ let parser filename =
       raise Exit
     | Yojson.Basic.Finally (exn1, exn2)->
       close_in_noerr filechannel;
-      let err_str = ("\nParsing excption:" ^ (Printexc.to_string exn1) ^ "\nFinalizer exception:" ^ (Printexc.to_string exn1)) in
+      let err_str = ("\nParsing excption:" ^ (Printexc.to_string exn1) ^ "\nFinalizer exception:" ^ (Printexc.to_string exn2)) in
       prerr_string "ERROR: error during parsing and catching error: ";
       prerr_endline err_str;
       raise Exit
     | Yojson.Basic.Util.Type_error (str, f)->
+      ignore (f);
       close_in_noerr filechannel;
       let err_str = str in
       let contains s1 s2 =
@@ -135,6 +136,7 @@ let parser filename =
         end;
       raise Exit
     | Yojson.Basic.Util.Undefined (str, f)->
+      ignore (f);
       close_in_noerr filechannel;
       let err_str = str in
       prerr_string "ERROR: Array index out of bounds found during parsing: ";
@@ -143,4 +145,5 @@ let parser filename =
     | e ->
       close_in_noerr filechannel;
       (*prerr_endline ("ERROR: unrecognized error during parsing:" ^ (Printexc.to_string e));*)
+      ignore (e);
       raise Exit
