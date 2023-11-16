@@ -1,15 +1,7 @@
-Machine.cmo : \
-    Machine.cmi
-Machine.cmx : \
-    Machine.cmi
+Machine.cmo : Machine.cmi
+Machine.cmx : Machine.cmi
 Machine.cmi :
-Parse.cmo : \
-    Machine.cmi
-Parse.cmx : \
-    Machine.cmx
-main.cmo : \
-    Parse.cmo \
-    Machine.cmi
-main.cmx : \
-    Parse.cmx \
-    Machine.cmx
+Parse.cmo : Machine.cmi
+Parse.cmx : Machine.cmx
+main.cmo : Parse.cmo Machine.cmi
+main.cmx : Parse.cmx Machine.cmx

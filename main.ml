@@ -16,12 +16,15 @@ let () =
   let argv = Array.to_list Sys.argv in 
   try
     (*Error check*)
-    let find_h = (fun elem -> ((String.equal elem "-h") || (String.equal elem "--help"))) in
-    if Option.is_some (List.find_opt find_h argv) then
+    let find_h = (fun elem -> ((elem = "-h") || (elem = "--help"))) in
+    try
+      if (List.find find_h argv != "") then
+      print_usage "";
+    with e ->
       begin
-        print_usage "";
-        raise Exit
+        print_string "";
       end;
+
     if List.length argv != 3 then
       prerr_endline "ERROR: Wrong number of arguments";
     
@@ -32,4 +35,4 @@ let () =
     Machine.Machine.present_machine machine;
     (*run machine*)
     Machine.Machine.run_machine machine (List.nth argv 2);
-  with e -> print_string "";
+  with e -> print_endline (Printexc.to_string e);

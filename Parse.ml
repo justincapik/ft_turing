@@ -35,11 +35,14 @@ let rec get_transitions tr states =
 
 
 let parser filename =
-  if ((not (Sys.file_exists filename)) || (not (String.ends_with ~suffix:".json" filename))) then
-    begin
-      prerr_endline "ERROR: invalide file";
-      raise Exit
-    end;
+  if ((not (Sys.file_exists filename)) ||
+      (String.length filename > 4 &&
+      (String.sub filename (String.length filename - 4-1) (String.length filename-1)) == ".json"))
+    then
+      begin
+        prerr_endline "ERROR: invalide file";
+        raise Exit
+      end;
 
   let filechannel = open_in filename in
     
