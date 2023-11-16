@@ -30,9 +30,11 @@ let () =
     
     (**) 
     let filename = List.nth argv 1 in
+    let data_string = List.nth argv 2 in
     let machine = Parse.parser filename in
+    Machine.Machine.check_string machine data_string;
     (*create machine struct*)
     Machine.Machine.present_machine machine;
     (*run machine*)
-    Machine.Machine.run_machine machine (List.nth argv 2);
+    Machine.Machine.run_machine machine data_string;
   with e -> print_string "";(*print_endline (Printexc.to_string e);*)

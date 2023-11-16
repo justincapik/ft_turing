@@ -11,6 +11,7 @@ module type MachineStruct =
       machine_data
     
     val check_instruction : machine_data -> unit
+    val check_string : machine_data -> string -> unit
     
     val present_machine : machine_data -> unit
 
@@ -82,6 +83,13 @@ module Machine : MachineStruct =
       in
       List.iter loop machine.transitions
 
+    let check_string machine data_string =
+      String.iter (fun f ->
+        if f = machine.blank then
+          begin prerr_endline "ERROR: found blank character in data string"; raise Exit end)
+        data_string
+
+
     let instruction_string instr = 
       let reading = ( "\t(" ^ instr.in_state ^ ", " ^ (String.make 1 instr.read) ^ ")") in
       let out = ( "(" ^ instr.in_state ^ ", " ^ (String.make 1 instr.write) ^ ", " ^ instr.action ^ ")") in
@@ -127,8 +135,9 @@ module Machine : MachineStruct =
               (*update cursor and string*)
               let cursor = if cur_inst.action = "RIGHT" then (cursor + 1) else (cursor - 1) in
               let str = update_str str cursor machine.blank in
-              let cursor = if cursor < 0 then 0 else cursor in 
-              loop insts str cursor cur_inst.to_state;
+              let cursor = if cursor < 0 then 0 else cursor in
+              (*move to next stae*) 
+              loop insts str cursor cur_inst.to_state
             | None ->
               prerr_endline ("\nMachine is blocked: couldn't match current state <" ^ cur_state ^
                 "> and current character <" ^ (String.make 1 str.[cursor]) ^ "> to instruction");

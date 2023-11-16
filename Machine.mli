@@ -10,6 +10,7 @@ module type MachineStruct =
       machine_data
     
     val check_instruction : machine_data -> unit
+    val check_string : machine_data -> string -> unit
 
     val present_machine : machine_data -> unit
 

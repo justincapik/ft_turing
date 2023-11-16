@@ -92,8 +92,6 @@ let parser filename =
       if (not (List.mem f sts)) then
         begin prerr_endline "ERROR: final state not found in states list"; raise Exit end)
       finals;
-
-    close_in_noerr filechannel;
    
     (*create machine*)
     let active_states = List.filter (fun elem -> not (List.mem elem finals)) sts in
@@ -104,7 +102,8 @@ let parser filename =
     Machine.check_instruction machine;
     
     machine
-    
+   
+  (*Json error catching*)
   with
     | Yojson.Json_error e ->
       close_in_noerr filechannel;
