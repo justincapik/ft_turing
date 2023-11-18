@@ -9,7 +9,8 @@
         "findEnd": [
             { "read" : "0", "to_state": "findEnd", "write": "0", "action": "RIGHT"},
             { "read" : "1", "to_state": "findEnd", "write": "1", "action": "RIGHT"},
-            { "read" : ".", "to_state": "getRight", "write": "=", "action": "LEFT"}
+            { "read" : ".", "to_state": "getRight", "write": "=", "action": "LEFT"},
+            { "read" : "=", "to_state": "getRight", "write": "=", "action": "LEFT"}
         ],
         "getRight": [
             { "read" : "0", "to_state": "getZero", "write": ".", "action": "LEFT"},
