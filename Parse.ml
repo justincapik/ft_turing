@@ -1,11 +1,19 @@
 open Machine
 
-let rec read_file channel contents =
-  try 
-    let line = input_line channel in
-    read_file channel (contents ^ line ^ "\n")
-  with e -> ignore(e);
-    contents
+let read_file channel =
+  let rec internal channel contents linenb =
+    if String.length contents > 1000000 then
+      contents
+    else
+      begin
+        try 
+          let line = input_line channel in
+          internal channel (contents ^ line ^ "\n") (linenb+1)
+        with e -> ignore(e);
+          contents
+      end
+  in
+  internal channel "" 0 
 
 let rec read_transitions transitions keys n =
   match n with
@@ -50,9 +58,9 @@ let parser filename =
 
   let filechannel = open_in filename in
     
-  let contents = read_file filechannel "" in
-
   try
+
+    let contents = read_file filechannel in
 
     flush stdout;
     close_in filechannel;
