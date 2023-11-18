@@ -92,7 +92,7 @@ module Machine : MachineStruct =
 
     let instruction_string instr = 
       let reading = ( "\t(" ^ instr.in_state ^ ", " ^ (String.make 1 instr.read) ^ ")") in
-      let out = ( "(" ^ instr.in_state ^ ", " ^ (String.make 1 instr.write) ^ ", " ^ instr.action ^ ")") in
+      let out = ( "(" ^ instr.to_state ^ ", " ^ (String.make 1 instr.write) ^ ", " ^ instr.action ^ ")") in
       (reading ^ " -> " ^ out)
 
     let update_str str cursor blank = 
