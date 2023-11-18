@@ -2,7 +2,7 @@
     "name" : "palindrom",
     "alphabet": [ ".", "0", "1", "n", "y", "=" ],
     "blank" : ".",
-    "states" : [ "findEnd", "getRight", "getZero", "markZero", "getOne", "markOne", "getLeft", "getStart", "HALT" ],
+    "states" : [ "findEnd", "getRight", "getZero", "markZero", "getOne", "markOne", "getLeft", "getStart", "palYes", "palNop", "HALT" ],
     "initial" : "findEnd",
     "finals" : [ "HALT" ],
     "transitions" : {
@@ -14,7 +14,8 @@
         "getRight": [
             { "read" : "0", "to_state": "getZero", "write": ".", "action": "LEFT"},
             { "read" : "1", "to_state": "getOne", "write": ".", "action": "LEFT"},
-            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"}
+            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "palYes", "write": "=", "action": "LEFT"}
         ],
         "getZero": [
             { "read" : "0", "to_state": "getZero", "write": "0", "action": "LEFT"},
@@ -45,6 +46,19 @@
             { "read" : "0", "to_state": "getStart", "write": "0", "action": "RIGHT"},
             { "read" : "1", "to_state": "getStart", "write": "1", "action": "RIGHT"},
             { "read" : ".", "to_state": "getRight", "write": ".", "action": "LEFT"}
+        ],
+        "palYes": [
+            { "read" : "0", "to_state": "palYes", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "palYes", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "HALT", "write": "y", "action": "LEFT"}
+        ],
+        "palNop": [
+            { "read" : "0", "to_state": "palNop", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "palNop", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "palNop", "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "HALT", "write": "n", "action": "LEFT"}
         ]
+
     }
 }
