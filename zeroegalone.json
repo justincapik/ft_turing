@@ -1,0 +1,49 @@
+{
+    "name" : "zeroegalone",
+    "alphabet": [ ".", "0", "1", "n", "y", "=" ],
+    "blank" : ".",
+    "states" : [ "findEnd", "getZero", "markZero", "getOne", "markOne", "palYes", "palNop", "HALT" ],
+    "initial" : "findEnd",
+    "finals" : [ "HALT" ],
+    "transitions" : {
+        "findEnd": [
+            { "read" : "0", "to_state": "findEnd", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "findEnd", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "markOne", "write": "=", "action": "LEFT"},
+            { "read" : "=", "to_state": "markOne", "write": "=", "action": "LEFT"}
+        ],
+        "getOne": [
+            { "read" : "0", "to_state": "getOne", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "getOne", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "markOne", "write": ".", "action": "LEFT"}
+        ],
+        "markOne": [
+            { "read" : "1", "to_state": "getZero", "write": ".", "action": "LEFT"},
+            { "read" : "0", "to_state": "palNop", "write": "0", "action": "RIGHT"},
+            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"}
+        ],
+        "getZero": [
+            { "read" : "0", "to_state": "getZero", "write": "0", "action": "LEFT"},
+            { "read" : "1", "to_state": "getZero", "write": "1", "action": "LEFT"},
+            { "read" : ".", "to_state": "markZero", "write": ".", "action": "RIGHT"}
+        ],
+        "markZero": [
+            { "read" : "0", "to_state": "getOne", "write": ".", "action": "RIGHT"},
+            { "read" : "1", "to_state": "palNop", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "palNop", "write": ".", "action": "RIGHT"}
+        ],
+        "palYes": [
+            { "read" : "0", "to_state": "palYes", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "palYes", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "HALT", "write": "y", "action": "LEFT"}
+        ],
+        "palNop": [
+            { "read" : "0", "to_state": "palNop", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "palNop", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "palNop", "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "HALT", "write": "n", "action": "LEFT"}
+        ]
+
+    }
+}
