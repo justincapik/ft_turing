@@ -144,6 +144,7 @@ module Machine : MachineStruct =
               raise Exit
         else
           begin
+            print_endline ((get_data_string str cursor) ^ "\tHALT");
             print_endline "-------------------------------------------------------------"
           end
       in

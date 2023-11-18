@@ -28,7 +28,7 @@ OBJOPT = $(SRCS:.ml=.cmx)
 
 all:	depend $(NAME)
 
-$(NAME): byt opt
+$(NAME): byt
 	ln -s $(NAME).byt $(NAME)
 
 opt:		$(NAME).opt
