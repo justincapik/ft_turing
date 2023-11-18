@@ -1,0 +1,292 @@
+{
+    "name" : "lievre",
+    "alphabet": [ "A", "B", "C", "H", "1", "<", ">", "$", "*", "|", ".", ",", "+", "=" ],
+    "blank" : ",",
+    "states" : [ 
+        "getTrans", "get1ForA",
+        "readForA",
+        "get$AFor1", "getAFor1", "is1InA", "execA1", "execA11", "execA11>", "execA11>Agoto*",
+        "get$AFor+", "getAFor+", "is+InA", "execA+", "execA+1", "execA+1>", "execA+1>Bgoto*",
+        "readForB",
+        "get$BFor1", "getBFor1", "is1InB", "execB1", "execB11", "execB11>", "execB11>Bgoto*",
+        "get$BFor=", "getBFor=", "is=InB", "execB=", "execB=.", "execB=.<", "execB=.<Cgoto*",
+        "readForC",
+        "get$CFor1", "getCFor1", "is1InC", "execC1", "execC1.", "execC1.<", "execC1.<Hgoto*",
+        "HALT" 
+    ],
+    "initial" : "getTrans",
+    "finals" : [ "HALT" ],
+    "transitions" : {
+        "getTrans": [
+            { "read" : "$", "to_state": "getTrans" , "write": "$", "action": "RIGHT"},
+            { "read" : "A", "to_state": "getTrans" , "write": "A", "action": "RIGHT"},
+            { "read" : "B", "to_state": "getTrans" , "write": "B", "action": "RIGHT"},
+            { "read" : "C", "to_state": "getTrans" , "write": "C", "action": "RIGHT"},
+            { "read" : "H", "to_state": "getTrans" , "write": "H", "action": "RIGHT"},
+            { "read" : "+", "to_state": "getTrans" , "write": "+", "action": "RIGHT"},
+            { "read" : "1", "to_state": "getTrans" , "write": "1", "action": "RIGHT"},
+            { "read" : "<", "to_state": "getTrans" , "write": "<", "action": "RIGHT"},
+            { "read" : ">", "to_state": "getTrans" , "write": ">", "action": "RIGHT"},
+            { "read" : "*", "to_state": "getTrans" , "write": "*", "action": "RIGHT"},
+            { "read" : "=", "to_state": "getTrans" , "write": "=", "action": "RIGHT"},
+            { "read" : ".", "to_state": "getTrans" , "write": ".", "action": "RIGHT"},
+            { "read" : "|", "to_state": "get1ForA" , "write": "|", "action": "RIGHT"}
+        ],
+        "get1ForA": [
+            { "read" : "1", "to_state": "get$AFor1" , "write": "*", "action": "LEFT"}
+        ],
+        "get$AFor1": [
+            { "read" : "A", "to_state": "get$AFor1" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "get$AFor1" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$AFor1" , "write": "C", "action": "LEFT"},
+            { "read" : "H", "to_state": "get$AFor1" , "write": "H", "action": "LEFT"},
+            { "read" : "+", "to_state": "get$AFor1" , "write": "+", "action": "LEFT"},
+            { "read" : "1", "to_state": "get$AFor1" , "write": "1", "action": "LEFT"},
+            { "read" : "<", "to_state": "get$AFor1" , "write": "<", "action": "LEFT"},
+            { "read" : ">", "to_state": "get$AFor1" , "write": ">", "action": "LEFT"},
+            { "read" : "*", "to_state": "get$AFor1" , "write": "*", "action": "LEFT"},
+            { "read" : "|", "to_state": "get$AFor1" , "write": "|", "action": "LEFT"},
+            { "read" : "=", "to_state": "get$AFor1" , "write": "=", "action": "LEFT"},
+            { "read" : ".", "to_state": "get$AFor1" , "write": ".", "action": "LEFT"},
+            { "read" : "$", "to_state": "getAFor1" , "write": "$", "action": "LEFT"}
+        ],
+        "getAFor1": [
+            { "read" : "A", "to_state": "is1InA" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "get$AFor1" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$AFor1" , "write": "C", "action": "LEFT"}
+        ],
+        "is1InA": [
+            { "read" : "+", "to_state": "get$AFor1" , "write": "+", "action": "LEFT"},
+            { "read" : "=", "to_state": "get$AFor1" , "write": "=", "action": "LEFT"},
+            { "read" : "1", "to_state": "execA1" , "write": "1", "action": "LEFT"}
+        ],
+        "execA1": [
+            { "read" : "1", "to_state": "execA11" , "write": "1", "action": "LEFT"},
+            { "read" : ".", "to_state": "get$AFor1" , "write": ".", "action": "LEFT"}
+        ],
+        "execA11": [
+            { "read" : ">", "to_state": "execA11>" , "write": ">", "action": "LEFT"}
+        ],
+        "execA11>": [
+            { "read" : "A", "to_state": "execA11>Agoto*" , "write": "A", "action": "RIGHT"},
+            { "read" : "B", "to_state": "get$AFor1" , "write": "B", "action": "RIGHT"}
+        ],
+        "execA11>Agoto*": [
+            { "read" : "A", "to_state": "execA11>Agoto*" , "write": "A", "action": "RIGHT"},
+            { "read" : "B", "to_state": "execA11>Agoto*" , "write": "B", "action": "RIGHT"},
+            { "read" : "C", "to_state": "execA11>Agoto*" , "write": "C", "action": "RIGHT"},
+            { "read" : "H", "to_state": "execA11>Agoto*" , "write": "H", "action": "RIGHT"},
+            { "read" : "+", "to_state": "execA11>Agoto*" , "write": "+", "action": "RIGHT"},
+            { "read" : "1", "to_state": "execA11>Agoto*" , "write": "1", "action": "RIGHT"},
+            { "read" : "<", "to_state": "execA11>Agoto*" , "write": "<", "action": "RIGHT"},
+            { "read" : ">", "to_state": "execA11>Agoto*" , "write": ">", "action": "RIGHT"},
+            { "read" : "|", "to_state": "execA11>Agoto*" , "write": "|", "action": "RIGHT"},
+            { "read" : "$", "to_state": "execA11>Agoto*" , "write": "$", "action": "RIGHT"},
+            { "read" : ".", "to_state": "execA11>Agoto*" , "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "execA11>Agoto*" , "write": "=", "action": "RIGHT"},
+            { "read" : "*", "to_state": "readForA" , "write": "1", "action": "RIGHT"}
+        ],
+        "readForA": [
+            { "read" : "1", "to_state": "get$AFor1" , "write": "*", "action": "LEFT"},
+            { "read" : "+", "to_state": "get$AFor+" , "write": "*", "action": "LEFT"}
+        ],
+        "get$AFor+": [
+            { "read" : "A", "to_state": "get$AFor+" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "get$AFor+" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$AFor+" , "write": "C", "action": "LEFT"},
+            { "read" : "H", "to_state": "get$AFor+" , "write": "H", "action": "LEFT"},
+            { "read" : "+", "to_state": "get$AFor+" , "write": "+", "action": "LEFT"},
+            { "read" : "1", "to_state": "get$AFor+" , "write": "1", "action": "LEFT"},
+            { "read" : "<", "to_state": "get$AFor+" , "write": "<", "action": "LEFT"},
+            { "read" : ">", "to_state": "get$AFor+" , "write": ">", "action": "LEFT"},
+            { "read" : "*", "to_state": "get$AFor+" , "write": "*", "action": "LEFT"},
+            { "read" : "|", "to_state": "get$AFor+" , "write": "|", "action": "LEFT"},
+            { "read" : ".", "to_state": "get$AFor+" , "write": ".", "action": "LEFT"},
+            { "read" : "=", "to_state": "get$AFor+" , "write": "=", "action": "LEFT"},
+            { "read" : "$", "to_state": "getAFor+" , "write": "$", "action": "LEFT"}
+        ],
+        "getAFor+": [
+            { "read" : "A", "to_state": "is+InA" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "get$AFor+" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$AFor+" , "write": "C", "action": "LEFT"}
+        ],
+        "is+InA": [
+            { "read" : "1", "to_state": "get$AFor+" , "write": "1", "action": "LEFT"},
+            { "read" : "+", "to_state": "execA+" , "write": "+", "action": "LEFT"}
+        ],
+        "execA+": [
+            { "read" : "1", "to_state": "execA+1" , "write": "1", "action": "LEFT"}
+        ],
+        "execA+1": [
+            { "read" : ">", "to_state": "execA+1>" , "write": ">", "action": "LEFT"}
+        ],
+        "execA+1>": [
+            { "read" : "B", "to_state": "execA+1>Bgoto*" , "write": "B", "action": "RIGHT"}
+        ],
+        "execA+1>Bgoto*": [
+            { "read" : "A", "to_state": "execA+1>Bgoto*" , "write": "A", "action": "RIGHT"},
+            { "read" : "B", "to_state": "execA+1>Bgoto*" , "write": "B", "action": "RIGHT"},
+            { "read" : "C", "to_state": "execA+1>Bgoto*" , "write": "C", "action": "RIGHT"},
+            { "read" : "H", "to_state": "execA+1>Bgoto*" , "write": "H", "action": "RIGHT"},
+            { "read" : "+", "to_state": "execA+1>Bgoto*" , "write": "+", "action": "RIGHT"},
+            { "read" : "1", "to_state": "execA+1>Bgoto*" , "write": "1", "action": "RIGHT"},
+            { "read" : "<", "to_state": "execA+1>Bgoto*" , "write": "<", "action": "RIGHT"},
+            { "read" : ">", "to_state": "execA+1>Bgoto*" , "write": ">", "action": "RIGHT"},
+            { "read" : "|", "to_state": "execA+1>Bgoto*" , "write": "|", "action": "RIGHT"},
+            { "read" : "$", "to_state": "execA+1>Bgoto*" , "write": "$", "action": "RIGHT"},
+            { "read" : ".", "to_state": "execA+1>Bgoto*" , "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "execA+1>Bgoto*" , "write": "=", "action": "RIGHT"},
+            { "read" : "*", "to_state": "readForB" , "write": "1", "action": "RIGHT"}
+        ],
+        "readForB": [
+            { "read" : "1", "to_state": "get$BFor1" , "write": "*", "action": "LEFT"},
+            { "read" : "=", "to_state": "get$BFor=" , "write": "*", "action": "LEFT"},
+            { "read" : ".", "to_state": "HALT" , "write": ".", "action": "LEFT"}
+        ],
+        "get$BFor1": [
+            { "read" : "A", "to_state": "get$BFor1" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "get$BFor1" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$BFor1" , "write": "C", "action": "LEFT"},
+            { "read" : "H", "to_state": "get$BFor1" , "write": "H", "action": "LEFT"},
+            { "read" : "+", "to_state": "get$BFor1" , "write": "+", "action": "LEFT"},
+            { "read" : "1", "to_state": "get$BFor1" , "write": "1", "action": "LEFT"},
+            { "read" : "<", "to_state": "get$BFor1" , "write": "<", "action": "LEFT"},
+            { "read" : ">", "to_state": "get$BFor1" , "write": ">", "action": "LEFT"},
+            { "read" : "*", "to_state": "get$BFor1" , "write": "*", "action": "LEFT"},
+            { "read" : "|", "to_state": "get$BFor1" , "write": "|", "action": "LEFT"},
+            { "read" : "=", "to_state": "get$BFor1" , "write": "=", "action": "LEFT"},
+            { "read" : ".", "to_state": "get$BFor1" , "write": ".", "action": "LEFT"},
+            { "read" : "$", "to_state": "getBFor1" , "write": "$", "action": "LEFT"}
+        ],
+        "getBFor1": [
+            { "read" : "A", "to_state": "get$BFor1" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "is1InB" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$BFor1" , "write": "C", "action": "LEFT"}
+        ],
+        "is1InB": [
+            { "read" : "1", "to_state": "execB1" , "write": "1", "action": "LEFT"},
+            { "read" : "=", "to_state": "get$BFor1" , "write": "=", "action": "LEFT"}
+        ],
+        "execB1": [
+            { "read" : "1", "to_state": "execB11" , "write": "1", "action": "LEFT"}
+        ],
+        "execB11": [
+            { "read" : ">", "to_state": "execB11>" , "write": ">", "action": "LEFT"}
+        ],
+        "execB11>": [
+            { "read" : "B", "to_state": "execB11>Bgoto*" , "write": "B", "action": "RIGHT"}
+        ],
+        "execB11>Bgoto*": [
+            { "read" : "A", "to_state": "execB11>Bgoto*" , "write": "A", "action": "RIGHT"},
+            { "read" : "B", "to_state": "execB11>Bgoto*" , "write": "B", "action": "RIGHT"},
+            { "read" : "C", "to_state": "execB11>Bgoto*" , "write": "C", "action": "RIGHT"},
+            { "read" : "H", "to_state": "execB11>Bgoto*" , "write": "H", "action": "RIGHT"},
+            { "read" : "+", "to_state": "execB11>Bgoto*" , "write": "+", "action": "RIGHT"},
+            { "read" : "1", "to_state": "execB11>Bgoto*" , "write": "1", "action": "RIGHT"},
+            { "read" : "<", "to_state": "execB11>Bgoto*" , "write": "<", "action": "RIGHT"},
+            { "read" : ">", "to_state": "execB11>Bgoto*" , "write": ">", "action": "RIGHT"},
+            { "read" : "|", "to_state": "execB11>Bgoto*" , "write": "|", "action": "RIGHT"},
+            { "read" : "$", "to_state": "execB11>Bgoto*" , "write": "$", "action": "RIGHT"},
+            { "read" : ".", "to_state": "execB11>Bgoto*" , "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "execB11>Bgoto*" , "write": "=", "action": "RIGHT"},
+            { "read" : "*", "to_state": "readForB" , "write": "1", "action": "RIGHT"}
+        ],
+        "get$BFor=": [
+            { "read" : "A", "to_state": "get$BFor=" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "get$BFor=" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$BFor=" , "write": "C", "action": "LEFT"},
+            { "read" : "H", "to_state": "get$BFor=" , "write": "H", "action": "LEFT"},
+            { "read" : "+", "to_state": "get$BFor=" , "write": "+", "action": "LEFT"},
+            { "read" : "1", "to_state": "get$BFor=" , "write": "1", "action": "LEFT"},
+            { "read" : "<", "to_state": "get$BFor=" , "write": "<", "action": "LEFT"},
+            { "read" : ">", "to_state": "get$BFor=" , "write": ">", "action": "LEFT"},
+            { "read" : "*", "to_state": "get$BFor=" , "write": "*", "action": "LEFT"},
+            { "read" : "|", "to_state": "get$BFor=" , "write": "|", "action": "LEFT"},
+            { "read" : ".", "to_state": "get$BFor=" , "write": ".", "action": "LEFT"},
+            { "read" : "=", "to_state": "get$BFor=" , "write": "=", "action": "LEFT"},
+            { "read" : "$", "to_state": "getBFor=" , "write": "$", "action": "LEFT"}
+        ],
+        "getBFor=": [
+            { "read" : "A", "to_state": "get$BFor=" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "is=InB" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$BFor=" , "write": "C", "action": "LEFT"}
+        ],
+        "is=InB": [
+            { "read" : "1", "to_state": "get$BFor=" , "write": "1", "action": "LEFT"},
+            { "read" : "=", "to_state": "execB=" , "write": "=", "action": "LEFT"}
+        ],
+        "execB=": [
+            { "read" : ".", "to_state": "execB=." , "write": ".", "action": "LEFT"}
+        ],
+        "execB=.": [
+            { "read" : "<", "to_state": "execB=.<" , "write": "<", "action": "LEFT"}
+        ],
+        "execB=.<": [
+            { "read" : "C", "to_state": "execB=.<Cgoto*" , "write": "C", "action": "RIGHT"}
+        ],
+        "execB=.<Cgoto*": [
+            { "read" : "A", "to_state": "execB=.<Cgoto*" , "write": "A", "action": "RIGHT"},
+            { "read" : "B", "to_state": "execB=.<Cgoto*" , "write": "B", "action": "RIGHT"},
+            { "read" : "C", "to_state": "execB=.<Cgoto*" , "write": "C", "action": "RIGHT"},
+            { "read" : "H", "to_state": "execB=.<Cgoto*" , "write": "H", "action": "RIGHT"},
+            { "read" : "+", "to_state": "execB=.<Cgoto*" , "write": "+", "action": "RIGHT"},
+            { "read" : "1", "to_state": "execB=.<Cgoto*" , "write": "1", "action": "RIGHT"},
+            { "read" : "<", "to_state": "execB=.<Cgoto*" , "write": "<", "action": "RIGHT"},
+            { "read" : ">", "to_state": "execB=.<Cgoto*" , "write": ">", "action": "RIGHT"},
+            { "read" : "|", "to_state": "execB=.<Cgoto*" , "write": "|", "action": "RIGHT"},
+            { "read" : "$", "to_state": "execB=.<Cgoto*" , "write": "$", "action": "RIGHT"},
+            { "read" : ".", "to_state": "execB=.<Cgoto*" , "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "execB=.<Cgoto*" , "write": "=", "action": "RIGHT"},
+            { "read" : "*", "to_state": "readForC" , "write": ".", "action": "LEFT"}
+        ],
+        "readForC": [
+            { "read" : "1", "to_state": "get$CFor1" , "write": "*", "action": "LEFT"}
+        ],
+        "get$CFor1": [
+            { "read" : "A", "to_state": "get$CFor1" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "get$CFor1" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "get$CFor1" , "write": "C", "action": "LEFT"},
+            { "read" : "+", "to_state": "get$CFor1" , "write": "+", "action": "LEFT"},
+            { "read" : "1", "to_state": "get$CFor1" , "write": "1", "action": "LEFT"},
+            { "read" : "<", "to_state": "get$CFor1" , "write": "<", "action": "LEFT"},
+            { "read" : ">", "to_state": "get$CFor1" , "write": ">", "action": "LEFT"},
+            { "read" : "*", "to_state": "get$CFor1" , "write": "*", "action": "LEFT"},
+            { "read" : "|", "to_state": "get$CFor1" , "write": "|", "action": "LEFT"},
+            { "read" : "=", "to_state": "get$CFor1" , "write": "=", "action": "LEFT"},
+            { "read" : ".", "to_state": "get$CFor1" , "write": ".", "action": "LEFT"},
+            { "read" : "$", "to_state": "getCFor1" , "write": "$", "action": "LEFT"}
+        ],
+        "getCFor1": [
+            { "read" : "A", "to_state": "get$CFor1" , "write": "A", "action": "LEFT"},
+            { "read" : "B", "to_state": "get$CFor1" , "write": "B", "action": "LEFT"},
+            { "read" : "C", "to_state": "is1InC" , "write": "C", "action": "LEFT"}
+        ],
+        "is1InC": [
+            { "read" : "1", "to_state": "execC1" , "write": "1", "action": "LEFT"}
+        ],
+        "execC1": [
+            { "read" : ".", "to_state": "execC1." , "write": ".", "action": "LEFT"}
+        ],
+        "execC1.": [
+            { "read" : "<", "to_state": "execC1.<" , "write": "<", "action": "LEFT"}
+        ],
+        "execC1.<": [
+            { "read" : "H", "to_state": "execC1.<Hgoto*" , "write": "H", "action": "RIGHT"}
+        ],
+        "execC1.<Hgoto*": [
+            { "read" : "A", "to_state": "execC1.<Hgoto*" , "write": "A", "action": "RIGHT"},
+            { "read" : "B", "to_state": "execC1.<Hgoto*" , "write": "B", "action": "RIGHT"},
+            { "read" : "C", "to_state": "execC1.<Hgoto*" , "write": "C", "action": "RIGHT"},
+            { "read" : "H", "to_state": "execC1.<Hgoto*" , "write": "H", "action": "RIGHT"},
+            { "read" : "+", "to_state": "execC1.<Hgoto*" , "write": "+", "action": "RIGHT"},
+            { "read" : "1", "to_state": "execC1.<Hgoto*" , "write": "1", "action": "RIGHT"},
+            { "read" : "<", "to_state": "execC1.<Hgoto*" , "write": "<", "action": "RIGHT"},
+            { "read" : ">", "to_state": "execC1.<Hgoto*" , "write": ">", "action": "RIGHT"},
+            { "read" : "|", "to_state": "execC1.<Hgoto*" , "write": "|", "action": "RIGHT"},
+            { "read" : "$", "to_state": "execC1.<Hgoto*" , "write": "$", "action": "RIGHT"},
+            { "read" : ".", "to_state": "execC1.<Hgoto*" , "write": ".", "action": "RIGHT"},
+            { "read" : "=", "to_state": "execC1.<Hgoto*" , "write": "=", "action": "RIGHT"},
+            { "read" : "*", "to_state": "HALT" , "write": ".", "action": "LEFT"}
+        ]
+    }
+}
