@@ -1,0 +1,50 @@
+{
+    "name" : "palindrom",
+    "alphabet": [ ".", "0", "1", "n", "y", "=" ],
+    "blank" : ".",
+    "states" : [ "findEnd", "getRight", "getZero", "markZero", "getOne", "markOne", "getLeft", "getStart", "HALT" ],
+    "initial" : "findEnd",
+    "finals" : [ "HALT" ],
+    "transitions" : {
+        "findEnd": [
+            { "read" : "0", "to_state": "findEnd", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "findEnd", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "getRight", "write": "=", "action": "LEFT"}
+        ],
+        "getRight": [
+            { "read" : "0", "to_state": "getZero", "write": ".", "action": "LEFT"},
+            { "read" : "1", "to_state": "getOne", "write": ".", "action": "LEFT"},
+            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"}
+        ],
+        "getZero": [
+            { "read" : "0", "to_state": "getZero", "write": "0", "action": "LEFT"},
+            { "read" : "1", "to_state": "getZero", "write": "1", "action": "LEFT"},
+            { "read" : ".", "to_state": "markZero", "write": ".", "action": "RIGHT"}
+        ],
+        "markZero": [
+            { "read" : "0", "to_state": "getStart", "write": ".", "action": "RIGHT"},
+            { "read" : "1", "to_state": "palNop", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"}
+        ],
+        "getOne": [
+            { "read" : "0", "to_state": "getOne", "write": "0", "action": "LEFT"},
+            { "read" : "1", "to_state": "getOne", "write": "1", "action": "LEFT"},
+            { "read" : ".", "to_state": "markOne", "write": ".", "action": "RIGHT"}
+        ],
+        "markOne": [
+            { "read" : "1", "to_state": "getStart", "write": ".", "action": "RIGHT"},
+            { "read" : "0", "to_state": "palNop", "write": "0", "action": "RIGHT"},
+            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"}
+        ],
+        "getLeft": [
+            { "read" : "0", "to_state": "getZero", "write": ".", "action": "LEFT"},
+            { "read" : "1", "to_state": "getOne", "write": ".", "action": "LEFT"},
+            { "read" : ".", "to_state": "palYes", "write": ".", "action": "RIGHT"}
+        ],
+        "getStart": [
+            { "read" : "0", "to_state": "getStart", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "getStart", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "getRight", "write": ".", "action": "LEFT"}
+        ]
+    }
+}
