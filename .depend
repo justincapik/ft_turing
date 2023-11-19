@@ -1,15 +1,40 @@
-Machine.cmo : \
-    Machine.cmi
-Machine.cmx : \
-    Machine.cmi
-Machine.cmi :
-Parse.cmo : \
-    Machine.cmi
-Parse.cmx : \
-    Machine.cmx
+Automate.cmo : \
+    Automate.cmi
+Automate.cmx : \
+    Automate.cmi
+Automate.cmi :
+Events.cmo : \
+    Run.cmi
+Events.cmx : \
+    Run.cmx
+Keys.cmo : \
+    Semantics.cmo
+Keys.cmx : \
+    Semantics.cmx
+Run.cmo : \
+    Semantics.cmo \
+    Automate.cmi \
+    Run.cmi
+Run.cmx : \
+    Semantics.cmx \
+    Automate.cmx \
+    Run.cmi
+Run.cmi : \
+    Semantics.cmo \
+    Automate.cmi
+Semantics.cmo :
+Semantics.cmx :
+Transitions.cmo : \
+    Automate.cmi
+Transitions.cmx : \
+    Automate.cmx
 main.cmo : \
-    Parse.cmo \
-    Machine.cmi
+    Transitions.cmo \
+    Semantics.cmo \
+    Keys.cmo \
+    Events.cmo
 main.cmx : \
-    Parse.cmx \
-    Machine.cmx
+    Transitions.cmx \
+    Semantics.cmx \
+    Keys.cmx \
+    Events.cmx

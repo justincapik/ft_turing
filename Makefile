@@ -1,4 +1,4 @@
-NAME		=	ft_turing
+NAME		=	ft_ality
 
 CAMLC		=	ocamlc
 CAMLOPT		=	ocamlopt
@@ -9,9 +9,15 @@ CAMLDEP		=	ocamldep
 ##		FILE DESCRIPTOR
 ##
 
-SRCS =	Machine.mli \
-		Machine.ml \
-		Parse.ml \
+SRCS =				\
+		Automate.mli		\
+		Run.mli			\
+		Automate.ml		\
+		Run.ml			\
+		Semantics.ml	\
+		Transitions.ml		\
+		Events.ml		\
+		Keys.ml			\
 		main.ml
 
 ##
@@ -35,10 +41,10 @@ opt:		$(NAME).opt
 byt:		$(NAME).byt
 
 $(NAME).byt:	$(OBJS)
-	ocamlfind $(CAMLC) -linkpkg -thread -package yojson -I +str str.cma -o $(NAME).byt $(OBJS)
+	ocamlfind $(CAMLC) -linkpkg -thread -package sdl2 -I +str str.cma -o $(NAME).byt $(OBJS)
 
 $(NAME).opt:	$(OBJOPT)
-	ocamlfind $(CAMLOPT) -linkpkg -thread -thread -package yojson -I +str str.cmxa -o $(NAME).opt $(OBJOPT)
+	ocamlfind $(CAMLOPT) -linkpkg -thread -thread -package sdl2 -I +str str.cmxa -o $(NAME).opt $(OBJOPT)
 
 ##
 ##		OCAML FILES
@@ -47,13 +53,13 @@ $(NAME).opt:	$(OBJOPT)
 .SUFFIXES:	.ml .mli .cmo .cmi .cmx
 
 .mli.cmi:
-	ocamlfind $(CAMLC) -thread -package yojson -I +str str.cma -c $<
+	ocamlfind $(CAMLC) -thread -package sdl2 -I +str str.cma -c $<
 
 .ml.cmo:
-	ocamlfind $(CAMLC) -thread -package yojson -I +str str.cma -c $<
+	ocamlfind $(CAMLC) -thread -package sdl2 -I +str str.cma -c $<
 
 .ml.cmx:
-	ocamlfind $(CAMLOPT) -thread -package yojson -I +str str.cmxa -c $<
+	ocamlfind $(CAMLOPT) -thread -package sdl2 -I +str str.cmxa -c $<
 
 ##
 ##		CLEANING 
@@ -75,9 +81,9 @@ install:
 	opam switch create 5.1.0
 	opam init
 	eval $(opam env --switch=5.1.0)
-	opam install yojson -y
-	eval $(opam env --switch=5.1.0)
 	opam install ocamlfind -y
+	eval $(opam env --switch=5.1.0)
+	opam install ocamlsdl2 -y
 	eval $(opam env --switch=5.1.0)
 
 .SILENT:	all $(NAME) fclean clean re 

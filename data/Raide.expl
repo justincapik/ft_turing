@@ -1,0 +1,13 @@
+Teleport:D,Up
+Lightning:D,F,LP
+Torpedo:B,B,F
+Fatality:F,B,B,B,HP
+#############
+
+         -- UP (Teleport)
+         |
+     D ---- F ---- LP (Lightning)
+     |    
+St ---- B ---- B ---- F (Torpedo)
+     |
+     -- F ---- B ---- B ---- B ---- HP (Fatality)
