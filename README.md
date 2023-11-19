@@ -31,12 +31,12 @@ il faudra peut etre echaper les $ avec un backslash
 
 les instructions possibles a ecrire dans l'autre sens:
 
-$A11>A => "A>11A\$"
+`$A11>A => "A>11A\$"`
 
-$A+1>B => "B>1+A\$"
+`$A+1>B => "B>1+A\$"`
 
-$B11>B => "B>11B\$"
+`$B11>B => "B>11B\$"`
 
-$B=.<C => "C<.=B\$"
+`$B=.<C => "C<.=B\$"`
 
-$C1.<H => "H<.1C\$"
+`$C1.<H => "H<.1C\$"`
